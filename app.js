@@ -12,6 +12,12 @@ app.use("/api", indexRoutes);
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
+const gameRoutes = require("./routes/games.routes");
+app.use("/api/games", gameRoutes);
+
+const reviewRoutes = require("./routes/reviews.routes");
+app.use("/api/reviews", reviewRoutes);
+
 require("./error-handling")(app);
 
 module.exports = app;

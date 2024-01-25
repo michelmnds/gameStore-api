@@ -9,7 +9,12 @@ const gameSchema = new mongoose.Schema(
     releaseDate: { type: String, required: true },
     tags: { type: [String], default: [] },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    price: { type: { String }, required: true },
+    reviews: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Review",
+      default: [],
+    },
+    price: { type: Number, required: true },
     description: { type: String, required: true, trim: true },
   },
   { timestamps: true }
