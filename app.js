@@ -18,6 +18,9 @@ app.use("/api/games", gameRoutes);
 const reviewRoutes = require("./routes/reviews.routes");
 app.use("/api/reviews", reviewRoutes);
 
+const userRoutes = require("./routes/users.routes");
+app.use("/api/users", userRoutes);
+
 require("./error-handling")(app);
 
 module.exports = app;
