@@ -10,7 +10,16 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
   },
   passwordHash: { type: String, required: true },
-  reviews: { type: mongoose.Schema.Types.ObjectId, ref: "Review" },
+  reviews: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Review",
+    default: [],
+  },
+  ownedGames: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Game",
+    default: [],
+  },
 });
 
 const User = mongoose.model("User", userSchema);
