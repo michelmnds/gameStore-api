@@ -1,96 +1,96 @@
-const jwt = require("jsonwebtoken")
-const User = require("../models/User.model.js")
-const bcrypt = require("bcrypt")
-const { isAuth } = require("../middleware/authentication.middleware.js")
+const jwt = require("jsonwebtoken");
+const User = require("../models/User.model.js");
+const bcrypt = require("bcrypt");
+const { isAuth } = require("../middleware/authentication.middleware.js");
 
-const router = require("express").Router()
+const router = require("express").Router();
 
 router.post("/signup", async (req, res) => {
-  const { email, username, password } = req.body
+  const { email, username, password } = req.body;
 
   try {
-    const potentialUser = await User.findOne({ email })
+    const potentialUser = await User.findOne({ email });
 
     if (!potentialUser) {
-      const salt = bcrypt.genSaltSync(13)
-      const passwordHash = bcrypt.hashSync(password, salt)
+      const salt = bcrypt.genSaltSync(13);
+      const passwordHash = bcrypt.hashSync(password, salt);
 
       try {
-        const newUser = await User.create({ email, username, passwordHash })
+        const newUser = await User.create({ email, username, passwordHash });
 
-        res.status(201).json(newUser)
+        res.status(201).json(newUser);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     } else {
-      res.status(400).json({ error: "User already exists" })
+      res.status(400).json({ error: "User already exists" });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-})
+});
 router.post("/login", async (req, res) => {
-  const { loginCredential, password } = req.body
+  const { loginCredential, password } = req.body;
 
   if (loginCredential.split("").includes("@")) {
-    const email = loginCredential
+    const email = loginCredential;
 
     try {
-      const potentialUser = await User.findOne({ email })
+      const potentialUser = await User.findOne({ email });
 
       if (potentialUser) {
         const passwordCorrect = bcrypt.compareSync(
           password,
           potentialUser.passwordHash
-        )
+        );
         if (passwordCorrect) {
           const authToken = jwt.sign(
             { userId: potentialUser._id },
             process.env.TOKEN_SECRET,
             { algorithm: "HS256", expiresIn: "12h" }
-          )
-          res.status(200).json({ token: authToken })
+          );
+          res.status(200).json({ token: authToken });
         } else {
-          res.status(403).json({ message: "Invalid email or password" })
+          res.status(403).json({ message: "Invalid email or password" });
         }
       } else {
-        res.status(401).json({ error: "Invalid email or password" })
+        res.status(401).json({ error: "Invalid email or password" });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   } else {
-    const username = loginCredential
+    const username = loginCredential;
 
     try {
-      const potentialUser = await User.findOne({ username })
+      const potentialUser = await User.findOne({ username });
 
       if (potentialUser) {
         const passwordCorrect = bcrypt.compareSync(
           password,
           potentialUser.passwordHash
-        )
+        );
         if (passwordCorrect) {
           const authToken = jwt.sign(
             { userId: potentialUser._id },
             process.env.TOKEN_SECRET,
             { algorithm: "HS256", expiresIn: "12h" }
-          )
-          res.status(200).json({ token: authToken })
+          );
+          res.status(200).json({ token: authToken });
         } else {
-          res.status(403).json({ message: "Invalid username or password" })
+          res.status(403).json({ message: "Invalid username or password" });
         }
       } else {
-        res.status(401).json({ error: "Invalid username or password" })
+        res.status(401).json({ error: "Invalid username or password" });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-})
+});
 router.get("/verify", isAuth, async (req, res) => {
-  const currentUser = await User.findById(req.tokenPayload.userId)
-  res.status(200).json(currentUser)
-})
+  const currentUser = await User.findById(req.tokenPayload.userId);
+  res.status(200).json(currentUser);
+});
 
-module.exports = router
+module.exports = router;
