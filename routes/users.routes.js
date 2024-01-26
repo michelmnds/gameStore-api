@@ -8,11 +8,15 @@ router.get("/:userId", isAuth, async (req, res) => {
   const { userId } = req.params;
   //COULD populate user.games and user.ownergames if we want
   try {
-    const user = await User.findById(userId).populate("ownedGames");
-    //removing password hash from passed back user
+    const user = await User.findById(userId).populate("ownedGames reviews");
+    //removing password hash from passed back user and obfuscating email
+    const redactedEmail =
+      user.email.slice(0, 2) +
+      "***" +
+      user.email.slice(user.email.indexOf("@"));
     const userData = {
       username: user.username,
-      email: user.username,
+      email: redactedEmail,
       reviews: user.reviews,
       ownedGames: user.ownedGames,
     };
