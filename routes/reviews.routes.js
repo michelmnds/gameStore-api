@@ -20,11 +20,11 @@ router.get("/game/:gameId", async (req, res) => {
   }
 });
 //GET reviews from a specific user
-router.get("/user/:userId", async (req, res) => {
+router.get("/user/:userId", isAuth, async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const reviews = await Review.find({ createdBy: userId });
+    const reviews = await Review.find({ createdBy: userId }).populate("game");
 
     res.status(200).json(reviews);
   } catch (error) {
