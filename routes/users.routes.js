@@ -8,7 +8,7 @@ router.get("/:userId", isAuth, async (req, res) => {
   const { userId } = req.params;
   //COULD populate user.games and user.ownergames if we want
   try {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate("ownedGames");
     //removing password hash from passed back user
     const userData = {
       username: user.username,

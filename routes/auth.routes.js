@@ -21,12 +21,14 @@ router.post("/signup", async (req, res) => {
         res.status(201).json(newUser);
       } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Internal server error" });
       }
     } else {
       res.status(400).json({ error: "User already exists" });
     }
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 router.post("/login", async (req, res) => {
@@ -58,6 +60,7 @@ router.post("/login", async (req, res) => {
       }
     } catch (error) {
       console.log(error);
+      res.status(500).json({ message: "Internal server error" });
     }
   } else {
     const username = loginCredential;
@@ -85,6 +88,7 @@ router.post("/login", async (req, res) => {
       }
     } catch (error) {
       console.log(error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 });

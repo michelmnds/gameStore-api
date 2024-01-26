@@ -10,6 +10,7 @@ router.get("/", async (req, res) => {
     res.status(200).json(gameList);
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 router.get("/:gameId", async (req, res) => {
@@ -21,6 +22,7 @@ router.get("/:gameId", async (req, res) => {
     res.status(200).json(game);
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -35,6 +37,7 @@ router.post("/", isAuth, async (req, res) => {
     res.status(201).json(newGame);
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -51,6 +54,7 @@ router.put("/:gameId", isAuth, async (req, res) => {
     res.status(200).json(patchedGame);
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -64,6 +68,7 @@ router.delete("/:gameId", isAuth, async (req, res) => {
     res.status(204).send();
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
