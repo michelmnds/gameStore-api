@@ -121,7 +121,7 @@ router.post("/otp/generate", isAuth, async (req, res) => {
 
 router.post("/otp/verify", isAuth, async (req, res) => {
   //same as before, check and make sure we are properly passing the token here
-  const { token } = req.body;
+  const { twoFactorToken } = req.body;
   const { userId } = req.tokenPayload;
 
   try {
@@ -142,7 +142,7 @@ router.post("/otp/verify", isAuth, async (req, res) => {
       secret: base32_secret,
     });
 
-    let delta = totp.validate({ token });
+    let delta = totp.validate({ twoFactorToken });
 
     if (delta === null) {
       return res
@@ -174,7 +174,7 @@ router.post("/otp/verify", isAuth, async (req, res) => {
 
 router.post("/otp/validate", async (req, res) => {
   //same as above again
-  const { userId, token } = req.body;
+  const { userId, twoFactorToken } = req.body;
   try {
     const user = await User.findById(userId);
 
@@ -192,7 +192,7 @@ router.post("/otp/validate", async (req, res) => {
       secret: base32_secret,
     });
 
-    let delta = totp.validate({ token, window: 1 });
+    let delta = totp.validate({ twoFactorToken, window: 1 });
 
     if (delta === null) {
       return res
