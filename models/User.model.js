@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema({
     ref: "Game",
     default: [],
   },
+  wishlistedGames: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Game",
+    default: [],
+  },
 });
 
 const User = mongoose.model("User", userSchema);

@@ -19,6 +19,7 @@ router.get("/:userId", isAuth, async (req, res) => {
       email: redactedEmail,
       reviews: user.reviews,
       ownedGames: user.ownedGames,
+      wishlistedGames: user.wishlistedGames,
     };
     res.status(200).json(userData);
   } catch (error) {
@@ -50,6 +51,7 @@ router.put("/buygame/:userId", isAuth, async (req, res) => {
         email: updatedUser.username,
         reviews: updatedUser.reviews,
         ownedGames: updatedUser.ownedGames,
+        wishlistedGames: updatedUser.wishlistedGames,
       };
       res.status(200).json(updatedUserData);
     }
@@ -59,4 +61,66 @@ router.put("/buygame/:userId", isAuth, async (req, res) => {
   }
 });
 
+//PUT - add game to wishlist in User
+router.put("/wishlistgame/:userId", isAuth, async (req, res) => {
+  const { userId } = req.params;
+  const { gameToAdd } = req.body;
+  try {
+    const user = await User.findById(userId);
+    const alreadyWishlisted = user.wishlistedGames.includes(gameToAdd);
+    if (alreadyWishlisted) {
+      res.status(403).json({ message: "game already owned" });
+    } else {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $push: { wishlistedGames: gameToAdd } },
+        { new: true }
+      );
+      const updatedUserData = {
+        username: updatedUser.username,
+        email: updatedUser.username,
+        reviews: updatedUser.reviews,
+        ownedGames: updatedUser.ownedGames,
+        wishlistedGames: updatedUser.wishlistedGames,
+      };
+      res.status(200).json(updatedUserData);
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "something went wrong wishlisting a game" });
+  }
+});
+//PUT - remove game from wishlist of user
+router.put("/removewishlistgame/:userId", isAuth, async (req, res) => {
+  const { userId } = req.params;
+  const { gameToRemove } = req.body;
+  try {
+    const user = await User.findById(userId);
+    const gameOnWishlist = user.wishlistedGames.includes(gameToRemove);
+    if (gameOnWishlist) {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $pull: { wishlistedGames: gameToRemove } },
+        { new: true }
+      );
+      const updatedUserData = {
+        username: updatedUser.username,
+        email: updatedUser.username,
+        reviews: updatedUser.reviews,
+        ownedGames: updatedUser.ownedGames,
+        wishlistedGames: updatedUser.wishlistedGames,
+      };
+      res.status(200).json(updatedUserData);
+    } else {
+      res.status(403).json({ message: "game is not on wishlist" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "something went wrong removing the game from your wishlist",
+    });
+  }
+});
 module.exports = router;

@@ -92,6 +92,7 @@ router.post("/login", async (req, res) => {
     }
   }
 });
+
 router.get("/verify", isAuth, async (req, res) => {
   const currentUser = await User.findById(req.tokenPayload.userId);
   res.status(200).json(currentUser);
