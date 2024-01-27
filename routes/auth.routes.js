@@ -33,63 +33,37 @@ router.post("/signup", async (req, res) => {
 });
 router.post("/login", async (req, res) => {
   const { loginCredential, password } = req.body;
-
-  if (loginCredential.split("").includes("@")) {
-    const email = loginCredential;
-
-    try {
-      const potentialUser = await User.findOne({ email });
-
-      if (potentialUser) {
-        const passwordCorrect = bcrypt.compareSync(
-          password,
-          potentialUser.passwordHash
-        );
-        if (passwordCorrect) {
-          const authToken = jwt.sign(
-            { userId: potentialUser._id },
-            process.env.TOKEN_SECRET,
-            { algorithm: "HS256", expiresIn: "12h" }
-          );
-          res.status(200).json({ token: authToken });
-        } else {
-          res.status(403).json({ message: "Invalid email or password" });
-        }
-      } else {
-        res.status(401).json({ error: "Invalid email or password" });
-      }
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Internal server error" });
+  let potentialUser;
+  try {
+    if (loginCredential.split("").includes("@")) {
+      const email = loginCredential;
+      potentialUser = await User.findOne({ email });
+    } else {
+      const username = loginCredential;
+      potentialUser = await User.findOne({ username });
     }
-  } else {
-    const username = loginCredential;
 
-    try {
-      const potentialUser = await User.findOne({ username });
-
-      if (potentialUser) {
-        const passwordCorrect = bcrypt.compareSync(
-          password,
-          potentialUser.passwordHash
+    if (potentialUser) {
+      const passwordCorrect = bcrypt.compareSync(
+        password,
+        potentialUser.passwordHash
+      );
+      if (passwordCorrect) {
+        const authToken = jwt.sign(
+          { userId: potentialUser._id },
+          process.env.TOKEN_SECRET,
+          { algorithm: "HS256", expiresIn: "12h" }
         );
-        if (passwordCorrect) {
-          const authToken = jwt.sign(
-            { userId: potentialUser._id },
-            process.env.TOKEN_SECRET,
-            { algorithm: "HS256", expiresIn: "12h" }
-          );
-          res.status(200).json({ token: authToken });
-        } else {
-          res.status(403).json({ message: "Invalid username or password" });
-        }
+        res.status(200).json({ token: authToken });
       } else {
-        res.status(401).json({ error: "Invalid username or password" });
+        res.status(403).json({ message: "Invalid Credentials" });
       }
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Internal server error" });
+    } else {
+      res.status(401).json({ error: "Invalid Credentials" });
     }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
