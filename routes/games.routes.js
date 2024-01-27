@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { isAuth } = require("../middleware/authentication.middleware");
 const Game = require("../models/Game.model");
+const User = require("../models/User.model");
 
 //GET Routes
 router.get("/", async (req, res) => {
@@ -64,7 +65,14 @@ router.delete("/:gameId", isAuth, async (req, res) => {
 
   try {
     await Game.findByIdAndDelete(gameId);
-
+    await User.updateMany(
+      { ownedGames: gameId },
+      { $pull: { ownedGames: gameId } }
+    );
+    await User.updateMany(
+      { wishlistedGames: gameId },
+      { $pull: { wishlistedGames: gameId } }
+    );
     res.status(204).send();
   } catch (error) {
     console.log(error);
