@@ -54,7 +54,17 @@ router.post("/login", async (req, res) => {
         password,
         potentialUser.passwordHash
       );
-      if (passwordCorrect) {
+      //check if 2fa is enabled - and password matches - send back a 202 with a temporary jwt token that we can then decrypt on the validate route
+      //using a different secret here so it cant be used to validate the user
+
+      if (passwordCorrect && potentialUser.otp_enabled) {
+        const loginToken = jwt.sign(
+          { userId: potentialUser._id },
+          process.env.TOKEN_SECRET_MFA,
+          { algorithm: "HS256", expiresIn: "1h" }
+        );
+        res.status(202).json({ loginToken });
+      } else if (passwordCorrect) {
         const authToken = jwt.sign(
           { userId: potentialUser._id },
           process.env.TOKEN_SECRET,
@@ -80,7 +90,6 @@ const generateRandomBase32 = () => {
 };
 
 router.post("/otp/generate", isAuth, async (req, res) => {
-  //NEED TO MAKE SURE USER ID IS ACTUALLY PART OF THE BODY WHEN THIS IS CALLED
   const { userId } = req.tokenPayload;
   try {
     const user = await User.findById(userId);
@@ -173,8 +182,11 @@ router.post("/otp/verify", isAuth, async (req, res) => {
 });
 
 router.post("/otp/validate", async (req, res) => {
-  const { userId, twoFactorToken } = req.body;
+  const { twoFactorToken, loginToken } = req.body;
   try {
+    //verify jwt token to forward userId - allows us to forward userId
+    const { userId } = jwt.verify(loginToken, process.env.TOKEN_SECRET_MFA);
+
     const user = await User.findById(userId);
 
     if (!user) {
@@ -198,8 +210,12 @@ router.post("/otp/validate", async (req, res) => {
         .status(401)
         .json({ message: "Token is invalid or user doesn't exist" });
     }
-
-    res.status(200).json({ otp_valid: true });
+    //if all checks pass, then we send back the token like we would in a regular signin
+    const authToken = jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET, {
+      algorithm: "HS256",
+      expiresIn: "12h",
+    });
+    res.status(200).json({ token: authToken });
   } catch (error) {
     console.log(error);
     res
