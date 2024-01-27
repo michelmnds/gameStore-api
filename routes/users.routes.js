@@ -22,6 +22,7 @@ router.get("/:userId", isAuth, async (req, res) => {
       reviews: user.reviews,
       ownedGames: user.ownedGames,
       wishlistedGames: user.wishlistedGames,
+      otp_verified: user.otp_verified,
     };
     res.status(200).json(userData);
   } catch (error) {

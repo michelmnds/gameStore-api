@@ -139,10 +139,10 @@ router.post("/otp/verify", isAuth, async (req, res) => {
       label: "IronhackGamestoreMiHaTo",
       algorithm: "SHA1",
       digits: 6,
-      secret: base32_secret,
+      secret: user.otp_base32,
     });
 
-    let delta = totp.validate({ twoFactorToken });
+    let delta = totp.validate({ token: twoFactorToken });
 
     if (delta === null) {
       return res
@@ -189,10 +189,10 @@ router.post("/otp/validate", async (req, res) => {
       label: "IronhackGamestoreMiHaTo",
       algorithm: "SHA1",
       digits: 6,
-      secret: base32_secret,
+      secret: user.otp_base32,
     });
 
-    let delta = totp.validate({ twoFactorToken, window: 1 });
+    let delta = totp.validate({ token: twoFactorToken, window: 1 });
 
     if (delta === null) {
       return res
