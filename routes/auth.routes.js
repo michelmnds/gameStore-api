@@ -173,7 +173,6 @@ router.post("/otp/verify", isAuth, async (req, res) => {
 });
 
 router.post("/otp/validate", async (req, res) => {
-  //same as above again
   const { userId, twoFactorToken } = req.body;
   try {
     const user = await User.findById(userId);
@@ -210,7 +209,6 @@ router.post("/otp/validate", async (req, res) => {
 });
 
 router.post("/otp/disable", isAuth, async (req, res) => {
-  //yep still the same
   const { userId } = req.tokenPayload;
   try {
     const user = await User.findById(userId);

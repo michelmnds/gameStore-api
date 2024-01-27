@@ -22,7 +22,7 @@ router.get("/:userId", isAuth, async (req, res) => {
       reviews: user.reviews,
       ownedGames: user.ownedGames,
       wishlistedGames: user.wishlistedGames,
-      otp_verified: user.otp_verified,
+      otp_enabled: user.otp_enabled,
     };
     res.status(200).json(userData);
   } catch (error) {
