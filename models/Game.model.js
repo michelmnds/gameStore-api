@@ -18,6 +18,7 @@ const gameSchema = new mongoose.Schema(
     discountInPercent: { type: Number, default: 0 },
     currency: { type: String, default: "EUR" },
     description: { type: String, required: true, trim: true },
+    ageRestricted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
