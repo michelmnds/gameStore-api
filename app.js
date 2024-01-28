@@ -21,6 +21,12 @@ app.use("/api/reviews", reviewRoutes);
 const userRoutes = require("./routes/users.routes");
 app.use("/api/users", userRoutes);
 
+const orderRoutes = require("./routes/orders.routes");
+app.use("/api/orders", orderRoutes);
+
+const invoiceRouter = require("./routes/invoices.routes");
+app.use("/api/invoices");
+
 require("./error-handling")(app);
 
 module.exports = app;
