@@ -1,4 +1,3 @@
-const User = require("../models/User.model.js");
 const Game = require("../models/Game.model");
 const Order = require("../models/Order.model.js");
 const Discountcode = require("../models/Discountcode.model.js");
@@ -93,8 +92,10 @@ router.post("/processpurchase", async (req, res, next) => {
     if (items.length === 0) {
       res.status(400).json({ message: "Order is empty" });
     }
+
     //attach user id to createdBy prop
     //const createdBy = userId
+
     //format games to match order model
     const formattedItems = formatPurchasedGames(items);
 
