@@ -7,7 +7,7 @@ const User = require("../models/User.model");
 //GET Routes
 
 //GET reviews for a specific game
-router.get("/game/:gameId", async (req, res) => {
+router.get("/game/:gameId", async (req, res, next) => {
   const gameId = req.params.gameId;
 
   try {
@@ -15,12 +15,11 @@ router.get("/game/:gameId", async (req, res) => {
     console.log(gameReviews);
     res.status(200).json(gameReviews);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 //GET reviews from a specific user
-router.get("/user/:userId", isAuth, async (req, res) => {
+router.get("/user/:userId", isAuth, async (req, res, next) => {
   const userId = req.params.userId;
 
   try {
@@ -28,23 +27,21 @@ router.get("/user/:userId", isAuth, async (req, res) => {
 
     res.status(200).json(reviews);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 //GET all the reviews
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     const reviewList = await Review.find();
 
     res.status(200).json(reviewList);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 //GET a single review by its ID
-router.get("/:reviewId", async (req, res) => {
+router.get("/:reviewId", async (req, res, next) => {
   const reviewId = req.params.reviewId;
 
   try {
@@ -52,13 +49,12 @@ router.get("/:reviewId", async (req, res) => {
 
     res.status(200).json(review);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 
 //POST
-router.post("/:gameId", isAuth, async (req, res) => {
+router.post("/:gameId", isAuth, async (req, res, next) => {
   const payload = req.body;
   const gameId = req.params.gameId;
   const userId = req.tokenPayload.userId;
@@ -89,13 +85,12 @@ router.post("/:gameId", isAuth, async (req, res) => {
       res.status(201).json(newReview);
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 
 //PUT
-router.put("/:reviewId", isAuth, async (req, res) => {
+router.put("/:reviewId", isAuth, async (req, res, next) => {
   const userId = req.tokenPayload.userId;
   const reviewId = req.params.reviewId;
   const payload = req.body;
@@ -118,12 +113,11 @@ router.put("/:reviewId", isAuth, async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 //DELETE
-router.delete("/:reviewId", isAuth, async (req, res) => {
+router.delete("/:reviewId", isAuth, async (req, res, next) => {
   const userId = req.tokenPayload.userId;
   const reviewId = req.params.reviewId;
 
@@ -149,13 +143,11 @@ router.delete("/:reviewId", isAuth, async (req, res) => {
         );
         res.status(204).send();
       } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+        next(error);
       }
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 

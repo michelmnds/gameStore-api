@@ -4,7 +4,7 @@ const router = require("express").Router();
 
 //get user by ID
 
-router.get("/:userId", isAuth, async (req, res) => {
+router.get("/:userId", isAuth, async (req, res, next) => {
   const { userId } = req.params;
   //COULD populate user.games and user.ownergames if we want
   try {
@@ -26,14 +26,13 @@ router.get("/:userId", isAuth, async (req, res) => {
     };
     res.status(200).json(userData);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "something went wrong fetching a user" });
+    next(error);
   }
 });
 
-//Put - update user: add purchased game
+//Put - update user: add purchased game // rework this to add free game to account :)
 
-router.put("/buygame/:userId", isAuth, async (req, res) => {
+router.put("/buygame/:userId", isAuth, async (req, res, next) => {
   //need to make this more secure later, so it checks if there was a purchase
   //for now this will do
   const { userId } = req.params;
@@ -59,13 +58,12 @@ router.put("/buygame/:userId", isAuth, async (req, res) => {
       res.status(200).json(updatedUserData);
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "something went wrong adding a game" });
+    next(error);
   }
 });
 
 //PUT - add game to wishlist in User
-router.put("/wishlistgame/:userId", isAuth, async (req, res) => {
+router.put("/wishlistgame/:userId", isAuth, async (req, res, next) => {
   const { userId } = req.params;
   const { gameToAdd } = req.body;
   try {
@@ -89,14 +87,11 @@ router.put("/wishlistgame/:userId", isAuth, async (req, res) => {
       res.status(200).json(updatedUserData);
     }
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ message: "something went wrong wishlisting a game" });
+    next(error);
   }
 });
 //PUT - remove game from wishlist of user
-router.put("/removewishlistgame/:userId", isAuth, async (req, res) => {
+router.put("/removewishlistgame/:userId", isAuth, async (req, res, next) => {
   const { userId } = req.params;
   const { gameToRemove } = req.body;
   try {
@@ -120,10 +115,7 @@ router.put("/removewishlistgame/:userId", isAuth, async (req, res) => {
       res.status(403).json({ message: "game is not on wishlist" });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "something went wrong removing the game from your wishlist",
-    });
+    next(error);
   }
 });
 module.exports = router;

@@ -4,17 +4,17 @@ const Game = require("../models/Game.model");
 const User = require("../models/User.model");
 
 //GET Routes
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     const gameList = await Game.find();
 
     res.status(200).json(gameList);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
-router.get("/:gameId", async (req, res) => {
+
+router.get("/:gameId", async (req, res, next) => {
   const gameId = req.params.gameId;
 
   try {
@@ -22,13 +22,12 @@ router.get("/:gameId", async (req, res) => {
 
     res.status(200).json(game);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 
 //POST Routes
-router.post("/", isAuth, async (req, res) => {
+router.post("/", isAuth, async (req, res, next) => {
   const payload = req.body;
   const userId = req.tokenPayload.userId;
 
@@ -37,13 +36,12 @@ router.post("/", isAuth, async (req, res) => {
 
     res.status(201).json(newGame);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 
 //PUT Route
-router.put("/:gameId", isAuth, async (req, res) => {
+router.put("/:gameId", isAuth, async (req, res, next) => {
   const gameId = req.params.gameId;
   const payload = req.body;
 
@@ -54,13 +52,12 @@ router.put("/:gameId", isAuth, async (req, res) => {
 
     res.status(200).json(patchedGame);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 
 //DELETE Route
-router.delete("/:gameId", isAuth, async (req, res) => {
+router.delete("/:gameId", isAuth, async (req, res, error) => {
   const gameId = req.params.gameId;
 
   try {
@@ -75,8 +72,7 @@ router.delete("/:gameId", isAuth, async (req, res) => {
     );
     res.status(204).send();
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 
