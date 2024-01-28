@@ -78,9 +78,9 @@ const calculateTotalAfterDiscount = (formattedItems, discountToApply) => {
 
 //dont forget to add isAuth once route is tested
 //this post route expects to receive an array of game ids and a discount code
-router.post("/processpurchase", async (req, res, next) => {
+router.post("/processpurchase", isAuth, async (req, res, next) => {
   const { games, discountCode } = req.body;
-  // const {userId} = req.tokenPayload
+  const { userId } = req.tokenPayload;
   try {
     const items = await Game.find(
       {
@@ -94,7 +94,7 @@ router.post("/processpurchase", async (req, res, next) => {
     }
 
     //attach user id to createdBy prop
-    //const createdBy = userId
+    const createdBy = userId;
 
     //format games to match order model
     const formattedItems = formatPurchasedGames(items);
@@ -125,15 +125,17 @@ router.post("/processpurchase", async (req, res, next) => {
       discountToApply
     );
 
-    res.status(200).json({
-      formattedItems,
-      createdBy: "userIDPleaseREPLACEME",
+    const createdOrder = await Order.create({
+      items: formattedItems,
+      createdBy,
       status: "SUCCESS",
       totalInEuroCentBeforeDiscount,
       totalInEuroCentAfterDiscount,
       discountcode: discountCode,
       discountCodePercentage: discountToApply.discountInPercent,
     });
+
+    res.status(200).json(createdOrder);
   } catch (error) {
     next(error);
   }
