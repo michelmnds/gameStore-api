@@ -30,7 +30,7 @@ router.get("/:userId", isAuth, async (req, res, next) => {
   }
 });
 
-//Put - update user: add purchased game
+//Put - update user: add purchased game // rework this to add free game to account :)
 
 router.put("/buygame/:userId", isAuth, async (req, res, next) => {
   //need to make this more secure later, so it checks if there was a purchase
