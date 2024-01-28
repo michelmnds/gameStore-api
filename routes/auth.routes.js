@@ -8,7 +8,7 @@ const { isAuth } = require("../middleware/authentication.middleware.js");
 
 const router = require("express").Router();
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", async (req, res, next) => {
   const { email, username, password } = req.body;
 
   try {
@@ -23,21 +23,19 @@ router.post("/signup", async (req, res) => {
 
         res.status(201).json(newUser);
       } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+        next(error);
       }
     } else {
       res.status(400).json({ error: "User already exists" });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 
 //post login - need to refactor for 2fa
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   const { loginCredential, password } = req.body;
   let potentialUser;
   try {
@@ -78,8 +76,7 @@ router.post("/login", async (req, res) => {
       res.status(401).json({ error: "Invalid Credentials" });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    next(error);
   }
 });
 
@@ -89,7 +86,7 @@ const generateRandomBase32 = () => {
   return base32;
 };
 
-router.post("/otp/generate", isAuth, async (req, res) => {
+router.post("/otp/generate", isAuth, async (req, res, next) => {
   const { userId } = req.tokenPayload;
   try {
     const user = await User.findById(userId);
@@ -121,14 +118,11 @@ router.post("/otp/generate", isAuth, async (req, res) => {
 
     res.status(200).json({ base32: base32_secret, otpauth_url });
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ message: "internal server error when generating OTP" });
+    next(error);
   }
 });
 
-router.post("/otp/verify", isAuth, async (req, res) => {
+router.post("/otp/verify", isAuth, async (req, res, next) => {
   //same as before, check and make sure we are properly passing the token here
   const { twoFactorToken } = req.body;
   const { userId } = req.tokenPayload;
@@ -174,14 +168,11 @@ router.post("/otp/verify", isAuth, async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "internal server error when verifying initial 2fa token",
-    });
+    next(error);
   }
 });
 
-router.post("/otp/validate", async (req, res) => {
+router.post("/otp/validate", async (req, res, next) => {
   const { twoFactorToken, loginToken } = req.body;
   try {
     //verify jwt token to forward userId - allows us to forward userId
@@ -217,14 +208,11 @@ router.post("/otp/validate", async (req, res) => {
     });
     res.status(200).json({ token: authToken });
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ message: "internal server error validating the 2fa token" });
+    next(error);
   }
 });
 
-router.post("/otp/disable", isAuth, async (req, res) => {
+router.post("/otp/disable", isAuth, async (req, res, next) => {
   const { userId } = req.tokenPayload;
   try {
     const user = await User.findById(userId);
@@ -245,10 +233,7 @@ router.post("/otp/disable", isAuth, async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ message: "some internal server error disabling 2fa" });
+    next(error);
   }
 });
 
