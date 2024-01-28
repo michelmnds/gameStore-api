@@ -15,6 +15,16 @@ const userSchema = new mongoose.Schema({
     ref: "Review",
     default: [],
   },
+  cart: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Game",
+    default: [],
+  },
+  roles: {
+    type: [String],
+    enum: ["ADMIN", "ENDUSER", "GAMEDEVELOPER"],
+    default: ["ENDUSER"],
+  },
   ownedGames: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Game",
