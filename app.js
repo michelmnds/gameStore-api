@@ -25,7 +25,10 @@ const orderRoutes = require("./routes/orders.routes");
 app.use("/api/orders", orderRoutes);
 
 const invoiceRouter = require("./routes/invoices.routes");
-app.use("/api/invoices");
+app.use("/api/invoices", invoiceRouter);
+
+const discountcodeRouter = require("./routes/discountcodes.routes");
+app.use("/api/discountcodes", discountcodeRouter);
 
 require("./error-handling")(app);
 

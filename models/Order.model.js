@@ -17,7 +17,9 @@ const orderSchema = new mongoose.Schema(
     },
     totalInEuroCentBeforeDiscount: { type: Number },
     totalInEuroCentAfterDiscount: { type: Number },
+    currency: { type: String, default: "EUR" },
     discountcode: { type: String, default: "" },
+    discountCodePercentage: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
