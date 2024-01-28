@@ -9,7 +9,7 @@ router.get("/:userId", isAuth, async (req, res, next) => {
   //COULD populate user.games and user.ownergames if we want
   try {
     const user = await User.findById(userId).populate(
-      "ownedGames reviews wishlistedGames"
+      "ownedGames reviews wishlistedGames cart"
     );
     //removing password hash from passed back user and obfuscating email
     const redactedEmail =
@@ -22,6 +22,7 @@ router.get("/:userId", isAuth, async (req, res, next) => {
       reviews: user.reviews,
       ownedGames: user.ownedGames,
       wishlistedGames: user.wishlistedGames,
+      cart: user.cart,
       otp_enabled: user.otp_enabled,
     };
     res.status(200).json(userData);
@@ -32,10 +33,10 @@ router.get("/:userId", isAuth, async (req, res, next) => {
 
 //Put - update user: add purchased game // rework this to add free game to account :)
 
-router.put("/buygame/:userId", isAuth, async (req, res, next) => {
+router.put("/buygame/", isAuth, async (req, res, next) => {
   //need to make this more secure later, so it checks if there was a purchase
   //for now this will do
-  const { userId } = req.params;
+  const { userId } = req.tokenPayload;
   const { gameToAdd } = req.body;
   try {
     const user = await User.findById(userId);
@@ -54,6 +55,7 @@ router.put("/buygame/:userId", isAuth, async (req, res, next) => {
         reviews: updatedUser.reviews,
         ownedGames: updatedUser.ownedGames,
         wishlistedGames: updatedUser.wishlistedGames,
+        cart: updatedUser.cart,
       };
       res.status(200).json(updatedUserData);
     }
@@ -63,14 +65,14 @@ router.put("/buygame/:userId", isAuth, async (req, res, next) => {
 });
 
 //PUT - add game to wishlist in User
-router.put("/wishlistgame/:userId", isAuth, async (req, res, next) => {
-  const { userId } = req.params;
+router.put("/wishlistgame/", isAuth, async (req, res, next) => {
+  const { userId } = req.tokenPayload;
   const { gameToAdd } = req.body;
   try {
     const user = await User.findById(userId);
     const alreadyWishlisted = user.wishlistedGames.includes(gameToAdd);
     if (alreadyWishlisted) {
-      res.status(403).json({ message: "game already owned" });
+      res.status(403).json({ message: "game already on wishlist" });
     } else {
       const updatedUser = await User.findByIdAndUpdate(
         userId,
@@ -83,6 +85,7 @@ router.put("/wishlistgame/:userId", isAuth, async (req, res, next) => {
         reviews: updatedUser.reviews,
         ownedGames: updatedUser.ownedGames,
         wishlistedGames: updatedUser.wishlistedGames,
+        cart: updatedUser.cart,
       };
       res.status(200).json(updatedUserData);
     }
@@ -91,8 +94,8 @@ router.put("/wishlistgame/:userId", isAuth, async (req, res, next) => {
   }
 });
 //PUT - remove game from wishlist of user
-router.put("/removewishlistgame/:userId", isAuth, async (req, res, next) => {
-  const { userId } = req.params;
+router.put("/removewishlistgame/", isAuth, async (req, res, next) => {
+  const { userId } = req.tokenPayload;
   const { gameToRemove } = req.body;
   try {
     const user = await User.findById(userId);
@@ -109,6 +112,7 @@ router.put("/removewishlistgame/:userId", isAuth, async (req, res, next) => {
         reviews: updatedUser.reviews,
         ownedGames: updatedUser.ownedGames,
         wishlistedGames: updatedUser.wishlistedGames,
+        cart: updatedUser.cart,
       };
       res.status(200).json(updatedUserData);
     } else {
@@ -118,4 +122,67 @@ router.put("/removewishlistgame/:userId", isAuth, async (req, res, next) => {
     next(error);
   }
 });
+
+//PUT add game to cart
+
+router.put("/addtocart/", isAuth, async (req, res, next) => {
+  const { userId } = req.tokenPayload;
+  const { gameToAdd } = req.body;
+  try {
+    const user = await User.findById(userId);
+    const alreadyAddedToCart = user.cart.includes(gameToAdd);
+    if (alreadyAddedToCart) {
+      res.status(403).json({ message: "game already in cart" });
+    } else {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $push: { cart: gameToAdd } },
+        { new: true }
+      );
+      const updatedUserData = {
+        username: updatedUser.username,
+        email: updatedUser.username,
+        reviews: updatedUser.reviews,
+        ownedGames: updatedUser.ownedGames,
+        wishlistedGames: updatedUser.wishlistedGames,
+        cart: updatedUser.cart,
+      };
+      res.status(200).json(updatedUserData);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+//PUT remove game from cart
+
+router.put("/removefromcart/", isAuth, async (req, res, next) => {
+  const { userId } = req.tokenPayload;
+  const { gameToRemove } = req.body;
+  try {
+    const user = await User.findById(userId);
+    const gameInCart = user.cart.includes(gameToRemove);
+    if (gameInCart) {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $pull: { cart: gameToRemove } },
+        { new: true }
+      );
+      const updatedUserData = {
+        username: updatedUser.username,
+        email: updatedUser.username,
+        reviews: updatedUser.reviews,
+        ownedGames: updatedUser.ownedGames,
+        wishlistedGames: updatedUser.wishlistedGames,
+        cart: updatedUser.cart,
+      };
+      res.status(200).json(updatedUserData);
+    } else {
+      res.status(403).json({ message: "game is not in cart" });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
