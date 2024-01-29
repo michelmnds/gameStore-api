@@ -5,12 +5,12 @@ const router = require("express").Router();
 //create new discount code - only admins should be allowed to do that
 
 router.post("/", isAuth, async (req, res, next) => {
-  const { code, discountInPercent, appliesToAlreadyDiscoutedGames } = req.body;
+  const { code, discountInPercent, appliesToAlreadyDiscountedGames } = req.body;
   try {
     const createdCode = await Discountcode.create({
       code,
       discountInPercent,
-      appliesToAlreadyDiscoutedGames,
+      appliesToAlreadyDiscountedGames,
     });
     res.status(200).json(createdCode);
   } catch (error) {

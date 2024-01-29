@@ -29,12 +29,12 @@ const calculateTotalBeforeDiscount = (formattedItems) => {
 //both individual and by discount code
 const calculateTotalAfterDiscount = (formattedItems, discountToApply) => {
   let discountInPercent = 0;
-  let appliesToAlreadyDiscoutedGames = false;
+  let appliesToAlreadyDiscountedGames = false;
   //check that discount code is valid and not empty
   if (discountToApply) {
     discountInPercent = discountToApply.discountInPercent;
-    appliesToAlreadyDiscoutedGames =
-      discountToApply.appliesToAlreadyDiscoutedGames;
+    appliesToAlreadyDiscountedGames =
+      discountToApply.appliesToAlreadyDiscountedGames;
   }
 
   const totalAfterDisc = formattedItems.reduce((total, item) => {
@@ -46,7 +46,7 @@ const calculateTotalAfterDiscount = (formattedItems, discountToApply) => {
     // case only item OR both but doesnt apply
     if (
       item.discountPercentApplied > 0 &&
-      (!discountInPercent || !appliesToAlreadyDiscoutedGames)
+      (!discountInPercent || !appliesToAlreadyDiscountedGames)
     ) {
       priceToAdd =
         item.defaultPriceInEuroCent * (1 - item.discountPercentApplied / 100);
@@ -59,7 +59,7 @@ const calculateTotalAfterDiscount = (formattedItems, discountToApply) => {
     if (
       item.discountPercentApplied > 0 &&
       discountInPercent > 0 &&
-      appliesToAlreadyDiscoutedGames
+      appliesToAlreadyDiscountedGames
     ) {
       priceToAdd =
         item.defaultPriceInEuroCent *
