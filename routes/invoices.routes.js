@@ -41,7 +41,6 @@ router.post("/fulfillinvoice/:orderId", async (req, res, next) => {
     }
     //then get the order and check if it was successful
     const relatedOrder = await Order.findById(orderId);
-    console.log(relatedOrder);
     if (!relatedOrder || !relatedOrder.status === "SUCCESS") {
       res
         .status(400)
@@ -128,6 +127,45 @@ router.get("/", isAuth, async (req, res, next) => {
       };
     });
     res.status(200).json(formattedInvoices);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//get total of last 7 days for dev of game //return number of sold games AND sum
+
+router.get("/dev", isAuth, async (req, res, next) => {
+  try {
+    console.log("does nothing");
+  } catch (error) {
+    next(error);
+  }
+});
+
+//get total of last 7 days of entire website
+router.get("/admin", isAuth, async (req, res, next) => {
+  const lastThirtyDays = new Date();
+  lastThirtyDays.setDate(lastThirtyDays.getDate() - 30);
+  try {
+    const invAllTime = await Invoice.find().populate({
+      path: "fromOrder",
+      select: "totalInEuroCentAfterDiscount",
+    });
+    const invLastThirtyDays = await Invoice.find({
+      createdAt: { $gte: lastThirtyDays },
+    }).populate({
+      path: "fromOrder",
+      select: "totalInEuroCentAfterDiscount",
+    });
+    const sumAllTime = invAllTime.reduce((acc, inv) => {
+      acc += inv.fromOrder.totalInEuroCentAfterDiscount;
+      return acc;
+    }, 0);
+    const sumThirtyDays = invLastThirtyDays.reduce((acc, inv) => {
+      acc += inv.fromOrder.totalInEuroCentAfterDiscount;
+      return acc;
+    }, 0);
+    res.status(200).json({ sumAllTime, sumThirtyDays });
   } catch (error) {
     next(error);
   }

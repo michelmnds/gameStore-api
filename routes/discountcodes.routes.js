@@ -18,12 +18,16 @@ router.post("/", isAuth, async (req, res, next) => {
   }
 });
 
-//GET to get information about a discount code that was applied in checkout
-router.get("/:discountcode", async (req, res, next) => {
-  const { discountcode } = req.params;
+//Post route to validate discount code
+router.post("/validate", async (req, res, next) => {
+  const { discountcode } = req.body;
   try {
     const discCode = await Discountcode.findOne({ code: discountcode });
-    res.status(200).json(discCode);
+    if (!discCode) {
+      res.status(400).json({ message: "bad code" });
+    } else {
+      res.status(200).json(discCode);
+    }
   } catch (error) {
     next(error);
   }
