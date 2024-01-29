@@ -32,6 +32,18 @@ router.get("/:gameId", async (req, res, next) => {
   }
 });
 
+router.get("/dev/:userId", isAuth, async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const games = await Game.find({ createdBy: userId });
+
+    res.status(200).json(games);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/name/:title", async (req, res, next) => {
   const title = req.params.title.replace("+", " ");
 
