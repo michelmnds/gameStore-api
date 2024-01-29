@@ -21,7 +21,19 @@ router.post("/signup", async (req, res, next) => {
       try {
         const newUser = await User.create({ email, username, passwordHash });
 
-        res.status(201).json(newUser);
+        const userObj = {
+          _id: newUser._id,
+          username: newUser.username,
+          email: newUser.email,
+          reviews: newUser.reviews,
+          cart: newUser.cart,
+          ownedGames: newUser.ownedGames,
+          wishlistedGame: newUser.wishlistedGame,
+          otp_enabled: newUser.otp_enabled,
+          otp_verified: newUser.otp_verified,
+        };
+
+        res.status(201).json(userObj);
       } catch (error) {
         next(error);
       }

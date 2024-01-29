@@ -5,8 +5,14 @@ const User = require("../models/User.model");
 
 //GET Routes
 router.get("/", async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+
   try {
-    const gameList = await Game.find();
+    const gameList = await Game.find()
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1, price: 1, discountInPercent: -1 });
 
     res.status(200).json(gameList);
   } catch (error) {
@@ -19,6 +25,18 @@ router.get("/:gameId", async (req, res, next) => {
 
   try {
     const game = await Game.findById(gameId);
+
+    res.status(200).json(game);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/name/:title", async (req, res, next) => {
+  const title = req.params.title.replace("+", " ");
+
+  try {
+    const game = await Game.findOne({ title });
 
     res.status(200).json(game);
   } catch (error) {
