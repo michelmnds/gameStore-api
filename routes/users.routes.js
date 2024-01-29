@@ -32,11 +32,10 @@ router.get("/:userId", isAuth, async (req, res, next) => {
   }
 });
 
-//Put - update user: add purchased game // rework this to add free game to account :)
+//Put - this will add a free game to the users account
+//if the user already owns the game or the game isnt free - the request is rejected
 
 router.put("/buygame/", isAuth, async (req, res, next) => {
-  //need to make this more secure later, so it checks if there was a purchase
-  //for now this will do
   const { userId } = req.tokenPayload;
   const { gameToAdd } = req.body;
   try {
