@@ -41,7 +41,6 @@ router.post("/fulfillinvoice/:orderId", async (req, res, next) => {
     }
     //then get the order and check if it was successful
     const relatedOrder = await Order.findById(orderId);
-    console.log(relatedOrder);
     if (!relatedOrder || !relatedOrder.status === "SUCCESS") {
       res
         .status(400)
