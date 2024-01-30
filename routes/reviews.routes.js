@@ -4,6 +4,31 @@ const Game = require("../models/Game.model");
 const Review = require("../models/Review.model");
 const User = require("../models/User.model");
 
+//helper function to calculate games average review score anytime reviews are edited in any ways
+//calculates average positive reviews
+//const newAverage = calculatePosiviteReviews(gameId);
+//await Game.findByIdAndUpdate(gameId, { reviewScore: newAverage });
+const calculatePosiviteReviews = async (gameId) => {
+  try {
+    const game = await Game.findById(gameId).populate("reviews");
+    const counter = game.reviews.reduce(
+      (acc, review) => {
+        acc.total += 1;
+        if (review.recommend === true) acc.posivite += 1;
+        return acc;
+      },
+      { posivite: 0, total: 0 }
+    );
+    let positivePercent = counter.posivite / counter.total;
+    if (counter.total === 0) {
+      positivePercent = 0;
+    }
+    return positivePercent;
+  } catch (error) {
+    next(error);
+  }
+};
+
 //GET Routes
 
 //GET reviews for a specific game
@@ -12,7 +37,6 @@ router.get("/game/:gameId", async (req, res, next) => {
 
   try {
     const gameReviews = await Review.find({ game: gameId });
-    console.log(gameReviews);
     res.status(200).json(gameReviews);
   } catch (error) {
     next(error);
@@ -80,6 +104,11 @@ router.post("/:gameId", isAuth, async (req, res, next) => {
       });
 
       await Game.findByIdAndUpdate(gameId, { $push: { reviews: newReview } });
+
+      const newAverage = await calculatePosiviteReviews(gameId);
+
+      await Game.findByIdAndUpdate(gameId, { reviewScore: newAverage });
+
       await User.findByIdAndUpdate(userId, { $push: { reviews: newReview } });
 
       res.status(201).json(newReview);
@@ -105,7 +134,10 @@ router.put("/:reviewId", isAuth, async (req, res, next) => {
         const editedReview = await Review.findByIdAndUpdate(reviewId, payload, {
           new: true,
         });
-
+        const newAverage = await calculatePosiviteReviews(editedReview.game);
+        await Game.findByIdAndUpdate(editedReview.game, {
+          reviewScore: newAverage,
+        });
         res.status(200).json(editedReview);
       } catch (error) {
         console.log(error);
@@ -130,6 +162,7 @@ router.delete("/:reviewId", isAuth, async (req, res, next) => {
         .json({ error: "Users can only delete their own reviews" });
     } else {
       try {
+        const { game } = await Review.findById(reviewId);
         await Review.findByIdAndDelete(reviewId);
 
         await User.updateMany(
@@ -141,6 +174,12 @@ router.delete("/:reviewId", isAuth, async (req, res, next) => {
           { reviews: reviewId },
           { $pull: { reviews: reviewId } }
         );
+
+        const newAverage = await calculatePosiviteReviews(game);
+        await Game.findByIdAndUpdate(game, {
+          reviewScore: newAverage,
+        });
+
         res.status(204).send();
       } catch (error) {
         next(error);
