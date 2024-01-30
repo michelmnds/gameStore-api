@@ -14,7 +14,10 @@ router.get("/", async (req, res, next) => {
       .limit(limit)
       .sort({ createdAt: -1, price: 1, discountInPercent: -1 });
 
-    res.status(200).json(gameList);
+    const games = await Game.find();
+    const totalGames = games.length;
+
+    res.status(200).json({ gameList, totalGames });
   } catch (error) {
     next(error);
   }
