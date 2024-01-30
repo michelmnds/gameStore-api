@@ -25,7 +25,7 @@ router.post("/", isAuth, isAdmin, async (req, res, next) => {
       discountInPercent,
       appliesToAlreadyDiscountedGames,
     });
-    res.status(200).json(createdCode);
+    res.status(201).json(createdCode);
   } catch (error) {
     next(error);
   }
