@@ -194,8 +194,14 @@ router.put("/removefromcart/", isAuth, async (req, res, next) => {
 router.get("/roles/:username", isAuth, isAdmin, async (req, res, next) => {
   const { username } = req.params;
   try {
-    const user = User.findOne({ username });
-    res.status(200).json(user.roles);
+    const user = await User.findOne({ username });
+    if (!user) {
+      res.status(400).json("no user found");
+    } else {
+      res
+        .status(200)
+        .json({ username: user.username, roles: user.roles, id: user._id });
+    }
   } catch (error) {
     next(error);
   }
