@@ -214,7 +214,7 @@ router.put("/roles/:userId", isAuth, isAdmin, async (req, res, next) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { $set: { newRoles } },
+      { $set: { roles: newRoles } },
       { new: true }
     );
     res.status(200).json(updatedUser.roles);

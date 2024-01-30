@@ -105,9 +105,11 @@ router.get("/user/:invoiceId", isAuth, async (req, res, next) => {
 });
 
 //get all invoices, guarded admin route for dashboard: should show only id, total, discount, userID and maybe games
-router.get("/", isAuth, async (req, res, next) => {
+router.get("/", isAuth, isAdmin, async (req, res, next) => {
   try {
     const adminInvoices = await Invoice.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
       .populate([
         {
           path: "fromOrder",

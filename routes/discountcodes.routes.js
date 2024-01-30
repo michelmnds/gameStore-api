@@ -62,7 +62,7 @@ router.put("/:codeId", isAuth, isAdmin, async (req, res, next) => {
 
 //Delete
 
-router.delete("/codeId", isAuth, isAdmin, async (req, res, next) => {
+router.delete("/:codeId", isAuth, isAdmin, async (req, res, next) => {
   const { codeId } = req.params;
   try {
     await Discountcode.findByIdAndDelete(codeId);
