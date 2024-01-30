@@ -1,5 +1,8 @@
 const User = require("../models/User.model.js");
-const { isAuth } = require("../middleware/authentication.middleware.js");
+const {
+  isAuth,
+  isAdmin,
+} = require("../middleware/authentication.middleware.js");
 const Game = require("../models/Game.model.js");
 const router = require("express").Router();
 
@@ -182,6 +185,24 @@ router.put("/removefromcart/", isAuth, async (req, res, next) => {
     } else {
       res.status(403).json({ message: "game is not in cart" });
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+//GET - get roles and id based on a username
+
+//PUT - admin route to change roles of any user
+router.put("/roles/:userId", isAuth, isAdmin, async (req, res, next) => {
+  const { userId } = req.params;
+  const { newRoles } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { newRoles } },
+      { new: true }
+    );
+    res.status(200).json(updatedUser.roles);
   } catch (error) {
     next(error);
   }
