@@ -16,7 +16,7 @@ const isAuth = (req, res, next) => {
   }
 };
 
-const isDev = async (req, req, next) => {
+const isDev = async (req, res, next) => {
   const userToCheck = await User.findById(req.tokenPayload.userId);
   if (userToCheck.roles?.includes("GAMEDEVELOPER")) {
     next();
@@ -27,7 +27,7 @@ const isDev = async (req, req, next) => {
   }
 };
 
-const isAdmin = async (req, req, next) => {
+const isAdmin = async (req, res, next) => {
   const userToCheck = await User.findById(req.tokenPayload.userId);
   if (userToCheck.roles?.includes("ADMIN")) {
     next();

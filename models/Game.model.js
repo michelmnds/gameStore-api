@@ -14,6 +14,7 @@ const gameSchema = new mongoose.Schema(
       ref: "Review",
       default: [],
     },
+    reviewScore: { type: Number, default: 0 },
     price: { type: Number, required: true },
     discountInPercent: { type: Number, default: 0 },
     currency: { type: String, default: "EUR" },
