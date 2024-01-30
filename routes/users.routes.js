@@ -25,6 +25,7 @@ router.get("/:userId", isAuth, async (req, res, next) => {
       wishlistedGames: user.wishlistedGames,
       cart: user.cart,
       otp_enabled: user.otp_enabled,
+      roles: user.roles,
     };
     res.status(200).json(userData);
   } catch (error) {
