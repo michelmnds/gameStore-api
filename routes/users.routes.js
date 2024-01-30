@@ -191,6 +191,15 @@ router.put("/removefromcart/", isAuth, async (req, res, next) => {
 });
 
 //GET - get roles and id based on a username
+router.get("/roles/:username", isAuth, isAdmin, async (req, res, next) => {
+  const { username } = req.params;
+  try {
+    const user = User.findOne({ username });
+    res.status(200).json(user.roles);
+  } catch (error) {
+    next(error);
+  }
+});
 
 //PUT - admin route to change roles of any user
 router.put("/roles/:userId", isAuth, isAdmin, async (req, res, next) => {
