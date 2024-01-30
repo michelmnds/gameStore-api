@@ -11,6 +11,7 @@ const formatPurchasedGames = (items) => {
       gameId: game._id,
       defaultPriceInEuroCent: game.price,
       discountPercentApplied: game.discountInPercent,
+      finalItemPrice: 0,
     };
     return formattedGame;
   });
@@ -42,6 +43,7 @@ const calculateTotalAfterDiscount = (formattedItems, discountToApply) => {
     // case no discount
     if (item.discountPercentApplied === 0 && !discountInPercent) {
       priceToAdd = item.defaultPriceInEuroCent;
+      item.finalItemPrice = priceToAdd;
     }
     // case only item OR both but doesnt apply
     if (
@@ -50,10 +52,12 @@ const calculateTotalAfterDiscount = (formattedItems, discountToApply) => {
     ) {
       priceToAdd =
         item.defaultPriceInEuroCent * (1 - item.discountPercentApplied / 100);
+      item.finalItemPrice = priceToAdd;
     }
     // case only code
     if (item.discountPercentApplied === 0 && discountInPercent > 0) {
       priceToAdd = item.defaultPriceInEuroCent * (1 - discountInPercent / 100);
+      item.finalItemPrice = priceToAdd;
     }
     // case BOTH , compound discounting => first applying game specific discount, then applying the code
     if (
@@ -65,6 +69,7 @@ const calculateTotalAfterDiscount = (formattedItems, discountToApply) => {
         item.defaultPriceInEuroCent *
         (1 - item.discountPercentApplied / 100) *
         (1 - discountInPercent / 100);
+      item.finalItemPrice = priceToAdd;
     }
 
     return total + priceToAdd;

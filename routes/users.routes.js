@@ -1,5 +1,6 @@
 const User = require("../models/User.model.js");
 const { isAuth } = require("../middleware/authentication.middleware.js");
+const Game = require("../models/Game.model.js");
 const router = require("express").Router();
 
 //get user by ID
@@ -24,6 +25,7 @@ router.get("/:userId", isAuth, async (req, res, next) => {
       wishlistedGames: user.wishlistedGames,
       cart: user.cart,
       otp_enabled: user.otp_enabled,
+      roles: user.roles,
     };
     res.status(200).json(userData);
   } catch (error) {
@@ -31,18 +33,18 @@ router.get("/:userId", isAuth, async (req, res, next) => {
   }
 });
 
-//Put - update user: add purchased game // rework this to add free game to account :)
+//Put - this will add a free game to the users account
+//if the user already owns the game or the game isnt free - the request is rejected
 
 router.put("/buygame/", isAuth, async (req, res, next) => {
-  //need to make this more secure later, so it checks if there was a purchase
-  //for now this will do
   const { userId } = req.tokenPayload;
   const { gameToAdd } = req.body;
   try {
     const user = await User.findById(userId);
+    const game = await Game.findById(gameToAdd);
     const gameAlreadyOwned = user.ownedGames.includes(gameToAdd);
-    if (gameAlreadyOwned) {
-      res.status(403).json({ message: "game already owned" });
+    if (gameAlreadyOwned || game.price !== 0) {
+      res.status(403).json({ message: "Unable to add game" });
     } else {
       const updatedUser = await User.findByIdAndUpdate(
         userId,

@@ -7,6 +7,7 @@ const orderSchema = new mongoose.Schema(
         gameId: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
         defaultPriceInEuroCent: { type: Number },
         discountPercentApplied: { type: Number },
+        finalItemPrice: { type: Number },
       },
     ],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
