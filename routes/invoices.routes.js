@@ -1,5 +1,9 @@
 const User = require("../models/User.model.js");
-const { isAuth } = require("../middleware/authentication.middleware.js");
+const {
+  isAuth,
+  isAdmin,
+  isDev,
+} = require("../middleware/authentication.middleware.js");
 const Invoice = require("../models/Invoice.model.js");
 const Order = require("../models/Order.model.js");
 const router = require("express").Router();
@@ -133,17 +137,69 @@ router.get("/", isAuth, async (req, res, next) => {
 });
 
 //get total of last 7 days for dev of game //return number of sold games AND sum
-
+//isDev add back once testing is over
 router.get("/dev", isAuth, async (req, res, next) => {
+  const { userId } = req.tokenPayload;
+  const lastThirtyDays = new Date();
+  lastThirtyDays.setDate(lastThirtyDays.getDate() - 30);
   try {
-    console.log("does nothing");
+    const allTime = await Invoice.find().populate({
+      path: "fromOrder",
+      model: "Order",
+      populate: {
+        path: "items.gameId",
+        model: "Game",
+      },
+    });
+    //console.log(JSON.stringify(allTime, null, 2));
+    const ThirtyDays = await Invoice.find({
+      createdAt: { $gte: lastThirtyDays },
+    }).populate({
+      path: "fromOrder",
+      model: "Order",
+      populate: {
+        path: "items.gameId",
+        model: "Game",
+      },
+    });
+    //filters sum up total revenue - store obviously takes 30% of the sale prices because thats how we make money :)
+    const devPercentage = 0.7;
+    const sumAllTimeByDev = allTime.reduce(
+      (acc, inv) => {
+        inv.fromOrder.items.map((item) => {
+          if (item.gameId.createdBy == userId) {
+            acc.count += 1;
+            acc.sum += item.finalItemPrice * devPercentage;
+            console;
+          }
+        });
+        return acc;
+      },
+      { sum: 0, count: 0 }
+    );
+
+    const sumThirtyDaysDev = ThirtyDays.reduce(
+      (acc, inv) => {
+        inv.fromOrder.items.map((item) => {
+          if (item.gameId.createdBy == userId) {
+            acc.count += 1;
+            acc.sum += item.finalItemPrice * devPercentage;
+            console;
+          }
+        });
+        return acc;
+      },
+      { sum: 0, count: 0 }
+    );
+
+    res.status(200).json({ sumAllTimeByDev, sumThirtyDaysDev });
   } catch (error) {
     next(error);
   }
 });
 
 //get total of last 7 days of entire website
-router.get("/admin", isAuth, async (req, res, next) => {
+router.get("/admin", isAuth, isAdmin, async (req, res, next) => {
   const lastThirtyDays = new Date();
   lastThirtyDays.setDate(lastThirtyDays.getDate() - 30);
   try {

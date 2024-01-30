@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User.model");
 
 const isAuth = (req, res, next) => {
   try {
@@ -15,4 +16,26 @@ const isAuth = (req, res, next) => {
   }
 };
 
-module.exports = { isAuth };
+const isDev = async (req, res, next) => {
+  const userToCheck = await User.findById(req.tokenPayload.userId);
+  if (userToCheck.roles?.includes("GAMEDEVELOPER")) {
+    next();
+  } else {
+    res
+      .status(403)
+      .json("You don't have the required role to perform this action");
+  }
+};
+
+const isAdmin = async (req, res, next) => {
+  const userToCheck = await User.findById(req.tokenPayload.userId);
+  if (userToCheck.roles?.includes("ADMIN")) {
+    next();
+  } else {
+    res
+      .status(403)
+      .json("You don't have the required role to perform this action");
+  }
+};
+
+module.exports = { isAuth, isDev, isAdmin };
