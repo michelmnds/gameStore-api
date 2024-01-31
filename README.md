@@ -62,14 +62,14 @@ Delete a specific game.
     "imageUrl": "url",
     "developer": "dev",
     "publisher": "publisher",
-    "releaseDate": "date example",
+    "releaseDat"e: "date example",
     "tags": ["tags"]
     "createdBy": "userId",
     "reviews": ["reviewId"],
     "reviewScore": 0,
     "price": 0,
     "discountInPercent": 0,
-    "currency": "EUR,
+    "currency": "EUR",
     "description": "example",
     "ageRestricted": true,
     }
@@ -91,6 +91,14 @@ Get invoices for developers.
 
 ### GET /admin
 Get invoices for admins.
+
+##Invoice Schema 
+```json
+    {
+    "createdBy": "userId",
+    "fromOrder": "orderId"
+    }
+```
 
 ## Review Routes (/api/reviews)
 
@@ -114,6 +122,16 @@ Update details of a specific review.
 
 ### DELETE /:reviewId
 Delete a specific review.
+
+## Review Schema
+```json
+    {
+    "game": "gameId",
+    "recommend": true,
+    "comment": "example",
+    "createdBy": "userId"
+    }
+```
 
 ## User Routes (/api/users)
 
@@ -140,3 +158,10 @@ Get roles for a specific user by username.
 
 ### PUT /roles/:userId
 Update roles for a specific user by userId.
+
+## User Schema
+```json
+    {
+    "gameId": "example"
+    }
+```
