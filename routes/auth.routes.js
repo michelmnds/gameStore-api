@@ -114,8 +114,8 @@ router.post("/otp/generate", isAuth, async (req, res, next) => {
 
     //creating TOTP class instance
     let totp = new OTPAuth.TOTP({
-      issuer: "IronhackGamestoreMiHaTo",
-      label: "IronhackGamestoreMiHaTo",
+      issuer: "Vanguard",
+      label: "Vanguard",
       algorithm: "SHA1",
       digits: 6,
       secret: base32_secret,
@@ -150,8 +150,8 @@ router.post("/otp/verify", isAuth, async (req, res, next) => {
     //creating totp instance to verify provided totp
     //might need to check if base32_secret exists if it causes issues
     let totp = new OTPAuth.TOTP({
-      issuer: "IronhackGamestoreMiHaTo",
-      label: "IronhackGamestoreMiHaTo",
+      issuer: "Vanguard",
+      label: "Vanguard",
       algorithm: "SHA1",
       digits: 6,
       secret: user.otp_base32,
@@ -199,8 +199,8 @@ router.post("/otp/validate", async (req, res, next) => {
     }
 
     let totp = new OTPAuth.TOTP({
-      issuer: "IronhackGamestoreMiHaTo",
-      label: "IronhackGamestoreMiHaTo",
+      issuer: "Vanguard",
+      label: "Vanguard",
       algorithm: "SHA1",
       digits: 6,
       secret: user.otp_base32,
