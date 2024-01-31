@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { isAuth } = require("../middleware/authentication.middleware");
+const { isAuth, isDev } = require("../middleware/authentication.middleware");
 const Game = require("../models/Game.model");
 const User = require("../models/User.model");
 
@@ -35,7 +35,7 @@ router.get("/:gameId", async (req, res, next) => {
   }
 });
 
-router.get("/dev/:userId", isAuth, async (req, res, next) => {
+router.get("/dev/:userId", isAuth, isDev, async (req, res, next) => {
   const { userId } = req.params;
 
   try {
@@ -60,7 +60,7 @@ router.get("/name/:title", async (req, res, next) => {
 });
 
 //POST Routes
-router.post("/", isAuth, async (req, res, next) => {
+router.post("/", isAuth, isDev, async (req, res, next) => {
   const payload = req.body;
   const userId = req.tokenPayload.userId;
 
@@ -74,7 +74,7 @@ router.post("/", isAuth, async (req, res, next) => {
 });
 
 //PUT Route
-router.put("/:gameId", isAuth, async (req, res, next) => {
+router.put("/:gameId", isAuth, isDev, async (req, res, next) => {
   const gameId = req.params.gameId;
   const payload = req.body;
 
@@ -90,7 +90,7 @@ router.put("/:gameId", isAuth, async (req, res, next) => {
 });
 
 //DELETE Route
-router.delete("/:gameId", isAuth, async (req, res, error) => {
+router.delete("/:gameId", isAuth, isDev, async (req, res, error) => {
   const gameId = req.params.gameId;
 
   try {
