@@ -112,10 +112,10 @@ Get invoices for developers.
 Get invoices for admins.
 
 ##Invoice Schema 
-```json
+```js
     {
-    "createdBy": "userId",
-    "fromOrder": "orderId"
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    fromOrder: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
     }
 ```
 
@@ -143,12 +143,12 @@ Update details of a specific review.
 Delete a specific review.
 
 ## Review Schema
-```json
+```js
     {
-    "game": "gameId",
-    "recommend": true,
-    "comment": "example",
-    "createdBy": "userId"
+    game: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
+    recommend: { type: Boolean, required: true },
+    comment: { type: String, default: null },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     }
 ```
 
@@ -179,8 +179,8 @@ Get roles for a specific user by username.
 Update roles for a specific user by userId.
 
 ## User Schema
-```json
+```js
     {
-    "gameId": "example"
+    game: { type: mongoose.Schema.Types.ObjectId, ref: "Game" }
     }
 ```
