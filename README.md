@@ -23,6 +23,15 @@ Disable OTP for the user.
 ### POST /verify
 Verify user authentication token.
 
+## Auth Schema 
+```json
+    {
+      "username": "username"
+      "email": "user@example.com",
+      "password": "password123"
+    }
+    ```
+
 ## Games Routes (/api/games)
 
 ### GET /
