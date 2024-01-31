@@ -140,8 +140,7 @@ router.put("/:reviewId", isAuth, async (req, res, next) => {
         });
         res.status(200).json(editedReview);
       } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+        next(error);
       }
     }
   } catch (error) {

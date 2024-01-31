@@ -139,8 +139,8 @@ router.get("/", isAuth, isAdmin, async (req, res, next) => {
 });
 
 //get total of last 7 days for dev of game //return number of sold games AND sum
-//isDev add back once testing is over
-router.get("/dev", isAuth, async (req, res, next) => {
+// add back once testing is over
+router.get("/dev", isAuth, isDev, async (req, res, next) => {
   const { userId } = req.tokenPayload;
   const lastThirtyDays = new Date();
   lastThirtyDays.setDate(lastThirtyDays.getDate() - 30);
@@ -153,7 +153,6 @@ router.get("/dev", isAuth, async (req, res, next) => {
         model: "Game",
       },
     });
-    //console.log(JSON.stringify(allTime, null, 2));
     const ThirtyDays = await Invoice.find({
       createdAt: { $gte: lastThirtyDays },
     }).populate({
