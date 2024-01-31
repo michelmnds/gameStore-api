@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const gameSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, unique: true, trim: true },
-    imageUrl: { type: [String], required: true }, //turn into array - index 0 is always thumbnail image
+    imageUrl: { type: String, required: true },
     developer: { type: String, required: true, trim: true },
     publisher: { type: String, required: true, trim: true },
     releaseDate: { type: String, required: true },
