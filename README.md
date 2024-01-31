@@ -26,9 +26,15 @@ Verify user authentication token.
 ## Auth Schema 
 ```json
     {
-      "username": "username"
-      "email": "user@example.com",
-      "password": "password123"
+    username: { type: String, unique: true, required: true, trim: true },
+    email: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true,
+        lowercase: true,
+      },
+    passwordHash: { type: String, required: true },
     }
 ```
 
