@@ -62,7 +62,7 @@ Delete a specific game.
     "imageUrl": "url",
     "developer": "dev",
     "publisher": "publisher",
-    "releaseDat"e: "date example",
+    "releaseDate": "date example",
     "tags": ["tags"]
     "createdBy": "userId",
     "reviews": ["reviewId"],
