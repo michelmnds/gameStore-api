@@ -55,6 +55,26 @@ Update details of a specific game.
 ### DELETE /:gameId
 Delete a specific game.
 
+## Game Schema
+```json
+    {
+    "title": "game title",
+    "imageUrl": "url",
+    "developer": "dev",
+    "publisher": "publisher",
+    "releaseDat"e: "date example",
+    "tags": ["tags"]
+    "createdBy": "userId",
+    "reviews": ["reviewId"],
+    "reviewScore": 0,
+    "price": 0,
+    "discountInPercent": 0,
+    "currency": "EUR,
+    "description": "example",
+    "ageRestricted": true,
+    }
+```
+
 ## Invoices Routes (/api/invoices)
 
 ### POST /fulfillinvoice/:orderId
