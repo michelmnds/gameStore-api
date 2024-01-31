@@ -30,7 +30,7 @@ Verify user authentication token.
       "email": "user@example.com",
       "password": "password123"
     }
-    ```
+```
 
 ## Games Routes (/api/games)
 
