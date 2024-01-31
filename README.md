@@ -24,7 +24,7 @@ Disable OTP for the user.
 Verify user authentication token.
 
 ## Auth Schema 
-```json
+```js
     {
     "username": { type: String, unique: true, required: true, trim: true },
     "email": {
