@@ -62,23 +62,36 @@ Update details of a specific game.
 Delete a specific game.
 
 ## Game Schema
-```json
+```js
     {
-    "title": "game title",
-    "imageUrl": "url",
-    "developer": "dev",
-    "publisher": "publisher",
-    "releaseDate": "date example",
-    "tags": ["tags"]
-    "createdBy": "userId",
-    "reviews": ["reviewId"],
-    "reviewScore": 0,
-    "price": 0,
-    "discountInPercent": 0,
-    "currency": "EUR",
-    "description": "example",
-    "ageRestricted": true,
-    }
+    title: { type: String, required: true, unique: true, trim: true },
+    imageUrl: { type: String, required: true },
+    developer: { type: String, required: true, trim: true },
+    publisher: { type: String, required: true, trim: true },
+    releaseDate: { type: String, required: true },
+    tags: {
+      type: [String],
+      default: [],
+      enum: [
+        "Action",
+        "Adventure",
+        "RPG",
+        ...
+      ],
+    },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    reviews: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Review",
+      default: [],
+    },
+    reviewScore: { type: Number, default: 0 },
+    price: { type: Number, required: true },
+    discountInPercent: { type: Number, default: 0 },
+    currency: { type: String, default: "EUR" },
+    description: { type: String, required: true, trim: true },
+    ageRestricted: { type: Boolean, default: false },
+  },
 ```
 
 ## Invoices Routes (/api/invoices)
