@@ -23,21 +23,6 @@ Disable OTP for the user.
 ### POST /verify
 Verify user authentication token.
 
-## Auth Schema 
-```js
-    {
-    username: { type: String, unique: true, required: true, trim: true },
-    email: {
-        type: String,
-        unique: true,
-        required: true,
-        trim: true,
-        lowercase: true,
-      },
-    passwordHash: { type: String, required: true },
-    }
-```
-
 ## Games Routes (/api/games)
 
 ### GET /
@@ -181,6 +166,14 @@ Update roles for a specific user by userId.
 ## User Schema
 ```js
     {
-    game: { type: mongoose.Schema.Types.ObjectId, ref: "Game" }
+    username: { type: String, unique: true, required: true, trim: true },
+    email: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true,
+        lowercase: true,
+      },
+    passwordHash: { type: String, required: true },
     }
 ```
