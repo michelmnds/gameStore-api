@@ -9,14 +9,14 @@ const { isAuth } = require("../middleware/authentication.middleware.js");
 const router = require("express").Router();
 
 router.post("/signup", async (req, res, next) => {
-  const { email, username, password } = req.body;
+  const { email, username, password1 } = req.body;
 
   try {
     const potentialUser = await User.findOne({ email });
 
     if (!potentialUser) {
       const salt = bcrypt.genSaltSync(13);
-      const passwordHash = bcrypt.hashSync(password, salt);
+      const passwordHash = bcrypt.hashSync(password1, salt);
 
       try {
         const newUser = await User.create({ email, username, passwordHash });
