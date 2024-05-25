@@ -71,14 +71,14 @@ router.post("/login", async (req, res, next) => {
         const loginToken = jwt.sign(
           { userId: potentialUser._id },
           process.env.TOKEN_SECRET_MFA,
-          { algorithm: "HS256", expiresIn: "1h" }
+          { algorithm: "HS256", expiresIn: 600 } //expires in as INT is seconds
         );
         res.status(202).json({ loginToken });
       } else if (passwordCorrect) {
         const authToken = jwt.sign(
           { userId: potentialUser._id },
           process.env.TOKEN_SECRET,
-          { algorithm: "HS256", expiresIn: "12h" }
+          { algorithm: "HS256", expiresIn: "24h" }
         );
         res.status(200).json({ token: authToken });
       } else {
@@ -216,7 +216,7 @@ router.post("/otp/validate", async (req, res, next) => {
     //if all checks pass, then we send back the token like we would in a regular signin
     const authToken = jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET, {
       algorithm: "HS256",
-      expiresIn: "12h",
+      expiresIn: "24h",
     });
     res.status(200).json({ token: authToken });
   } catch (error) {
